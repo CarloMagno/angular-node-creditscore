@@ -11,6 +11,10 @@ push-to-releases:
     - internal/docker-push:
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         cmd: node /pipeline/source/app.js
+	username: $DOCKER_USERNAME
+	password: $DOCKER_PASSWORD
+	repository: $DOCKER_REPO
+	registry: https://iad.ocir.io/v2
 
 deploy-to-oke:
   box:
@@ -39,7 +43,7 @@ deploy-to-oke:
         server: $KUBERNETES_MASTER
         token: $KUBERNETES_TOKEN
         insecure-skip-tls-verify: true
-        command: create secret docker-registry wrelease --docker-server=wcr.io --docker-username=$WERCKER_APPLICATION_OWNER_NAME --docker-password=$KUBERNETES_TOKEN --docker-email=${WERCKER_APPLICATION_OWNER_NAME}@mail.com --namespace=$WERCKER_APPLICATION_OWNER_NAME; echo 'secret step'
+        command: create secret docker-registry $OKE_IMAGESECRET --docker-server=iad.ocir.io --docker-username=$DOCKER_USERNAME --docker-password=$KUBERNETES_TOKEN --docker-email=${WERCKER_APPLICATION_OWNER_NAME}@mail.com --namespace=$WERCKER_APPLICATION_OWNER_NAME; echo 'secret step'
     
     - kubectl:
         name: create deplyoment
